@@ -14,6 +14,8 @@ def render(result, out_path):
     top = stats.get("top_products", [])
     top_str = "、".join(f"{_esc(n)}×{c}" for n, c in top[:3]) or "暂无"
     avg = stats.get("avg_amount", "-")
+    rec = result.get("recommend", "")
+    rec_row = f"<b>下一单推荐</b>：{_esc(rec)}<br>\n" if rec else ""
 
     page = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
@@ -44,8 +46,8 @@ h1{{text-align:center;font-size:38px;margin:10px 0 4px;background:linear-gradien
 <b>在册订单</b>：{result['order_count']} 单<br>
 <b>时段画像</b>：{_esc(period_str)}<br>
 <b>本命单品</b>：{top_str}<br>
-<b>客单价</b>：{avg} 元
-</div>
+<b>客单价</b>：{avg} 元<br>
+{rec_row}</div>
 <div class="foot">数据来源：麦当劳官方 MCP · <b>麦门审判 mcd-maimen-trial</b></div>
 </div></body></html>"""
     with open(out_path, "w", encoding="utf-8") as f:
