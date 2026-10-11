@@ -15,6 +15,14 @@
 
 麦当劳程序员创意开发大赛参赛作品。把**麦门浓度测试**（quiz 答题）和**订单人格审判**（真实历史订单行为分析）结合在一起。
 
+## 30 秒体验
+
+| 方式 | 怎么玩 | 说明 |
+| --- | --- | --- |
+| 网页版 | https://ttnan.github.io/mcd-maimen-trial/ | 打开即玩，零登录 |
+| 完整版演示 | `python trial.py --demo` | 脱敏示例数据，无需 Token，一次看完整流程 |
+| 完整版真实 | `MCD_MCP_TOKEN=xxx python trial.py` | 你的真实订单审判 |
+
 ## 玩法
 
 **第一步：答题。** 18 道题，12 道麦门知识 + 6 道习惯：
@@ -79,7 +87,11 @@ MCD_MCP_TOKEN=你的token python trial.py
 
 ## 示例
 
-- [`sample_report.html`](sample_report.html) —— 完整版脱敏示例报告（合成数据）
+- [`sample_report.html`](sample_report.html) —— 完整版脱敏示例报告（合成数据，`python trial.py --demo` 一键生成）
+- 分享卡示例（`report.html` 里点「📥 下载分享卡 PNG」可得）：
+
+<p align="center"><img src="assets/share-card-sample.jpg" width="300" alt="分享卡示例"></p>
+
 - [`assets/poster.jpg`](assets/poster.jpg) —— 宣传海报
 
 ## 目录结构
