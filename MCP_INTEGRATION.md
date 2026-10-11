@@ -14,12 +14,12 @@
 - **传输协议**：Streamable HTTP（JSON-RPC over HTTP POST）
 - **鉴权**：请求头 `Authorization: Bearer <MCD_MCP_TOKEN>`
 
-## 使用的 Tool
+## 使用的 Tool（均为只读）
 
 | Tool | 用途 |
 | --- | --- |
 | `order-list` | 拉取用户历史订单（下单时间、门店、商品清单、实付金额），是人格审判的核心数据源 |
-| `now-time-info` | 校准当前时间（备用） |
+| `available-coupons` | 查询当前可领优惠券：实锤「薅羊毛党」，并参与下一单推荐 |
 
 > 实际 Tool 名以官方 MCP 文档为准。
 
@@ -27,11 +27,13 @@
 
 ```
 initialize（建连）
-  → 交互式 quiz（7 道知识题 + 3 道习惯题，本地题库 quiz.json）
+  → 交互式 quiz（12 道知识题 + 6 道习惯题，本地题库 quiz.json）
   → order-list → 历史订单
-  → analyzer.py：时段分布 / 本命单品 / 客单价 / 门店离散度 / 白嫖记录 → 行为画像 + 行为分
+  → available-coupons → 当前可领券
+  → analyzer.py：时段分布 / 本命单品 / 客单价 / 门店离散度 / 白嫖记录 / 近30天活跃 / 深夜浓度 / 客单价稳定 → 行为画像 + 行为分
   → personas.py：quiz 分 × 0.4 + 行为分 × 0.6 → 段位；反差规则 → 嘴强王者 / 身体很诚实；标签 → 毒舌判词
-  → report.py：生成单文件 HTML 分享卡
+  → recommend.py：本命单品 × 可领券 → 下一单推荐
+  → report.py：生成单文件 HTML 分享卡（含下一单推荐）
 ```
 
 ## 业务价值
