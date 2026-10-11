@@ -2,6 +2,7 @@
 import json
 import os
 import urllib.request
+from urllib.error import HTTPError
 
 MCP_URL = os.environ.get("MCD_MCP_URL", "https://mcp.mcd.cn")
 TOKEN = os.environ.get("MCD_MCP_TOKEN", "")
@@ -19,9 +20,16 @@ def rpc(method, params=None, session=None, timeout=30):
     if session:
         headers["Mcp-Session-Id"] = session
     req = urllib.request.Request(MCP_URL, data=body, headers=headers)
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        raw = resp.read().decode("utf-8", "replace")
-        new_session = resp.headers.get("Mcp-Session-Id") or session
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            raw = resp.read().decode("utf-8", "replace")
+            new_session = resp.headers.get("Mcp-Session-Id") or session
+    except HTTPError as e:
+        if e.code == 429:
+            raise RuntimeError("麦当劳 MCP 限流 (429)：每分钟最多 600 次请求，稍等片刻再试")
+        if e.code in (401, 403):
+            raise RuntimeError(f"MCP 鉴权失败 (HTTP {e.code})：Token 可能过期，去 https://open.mcd.cn/mcp 重新激活")
+        raise RuntimeError(f"MCP 请求失败 (HTTP {e.code})")
     try:
         return json.loads(raw), new_session
     except json.JSONDecodeError:
