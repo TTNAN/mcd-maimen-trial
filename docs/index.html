@@ -138,7 +138,7 @@ h2.rt{text-align:center;font-size:32px;margin:10px 0 6px;
   <span class="float" style="top:38%;left:14%;animation-delay:2.8s;font-size:26px">🍔</span>
   <div class="kicker">麦 门 审 判</div>
   <h1>麦门浓度测试</h1>
-  <p class="sub">你说你是麦门信徒？<br>10 道题 + 毒舌判词，看看你是路人还是祖师</p>
+  <p class="sub">你说你是麦门信徒？<br>18 道题 + 毒舌判词，看看你是路人还是祖师</p>
   <button class="cta" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">开始审判 🍔</button>
 </header>
 
@@ -163,7 +163,7 @@ h2.rt{text-align:center;font-size:32px;margin:10px 0 6px;
 <section id="home" class="card">
   <div class="kicker">审 判 即 将 开 始</div>
   <h2 class="rt">你敢接受审判吗？</h2>
-  <p class="sub">7 道麦门知识题：巨无霸几层肉饼？1+1 随心配多少钱？<br>3 道习惯题：频率、本命单品、深夜放纵<br>答错直接开嘲讽，答完生成你的专属判词卡</p>
+  <p class="sub">12 道麦门知识题：巨无霸几层肉饼？1+1 随心配多少钱？<br>6 道习惯题：频率、本命单品、深夜放纵<br>答错直接开嘲讽，答完生成你的专属判词卡</p>
   <button class="btn primary" onclick="start()">开始审判</button>
   <p class="note">网页版无需登录，数据不出手机。<br>想用<b>真实历史订单</b>来审判（反差梗更准），请看 GitHub 完整版。</p>
 </section>
@@ -187,6 +187,7 @@ h2.rt{text-align:center;font-size:32px;margin:10px 0 6px;
   <div class="tags" id="tags"></div>
   <div class="roast" id="roast"></div>
   <button class="btn primary" onclick="makeCard()">生成分享卡 📸</button>
+  <button class="btn ghost" onclick="shareCard()">一键分享给朋友 🔗</button>
   <img id="cardImg" class="hide" alt="麦门审判分享卡">
   <p class="note hide" id="saveTip">手机上长按图片保存，发给朋友看看谁更麦门 🍟</p>
   <a id="dl" class="hide"></a>
@@ -203,10 +204,10 @@ h2.rt{text-align:center;font-size:32px;margin:10px 0 6px;
 
 <script>
 // 题库与规则与仓库 quiz.json / src/personas.py 保持一致
-const QUIZ = {"habit":[{"options":["每周3次以上","每周1-2次","每月几次","想起来才吃"],"q":"你吃麦当劳的频率？","tags":["干饭战士","稳定输出","随缘麦门","云信徒"]},{"options":["巨无霸","麦辣鸡腿堡","薯条","麦乐鸡","板烧鸡腿堡"],"q":"你的本命单品是？","tags":["经典派","辣党","薯条教","快乐鸡","肉食者"]},{"options":["经常","偶尔","从不"],"q":"深夜（22点后）点过麦当劳吗？","tags":["深夜党","偶尔放纵","自律党"]}],"knowledge":[{"answer":1,"explain":"巨无霸 = 两层纯牛肉饼，这都不知道还敢说自己是麦门人？","options":["1层","2层","3层"],"points":10,"q":"巨无霸里有几层牛肉饼？"},{"answer":1,"explain":"5块。4块那是哄小孩的儿童套餐。","options":["4块","5块","6块"],"points":10,"q":"麦乐鸡块常规装有几块？"},{"answer":1,"explain":"13.9，打工人的续命丹。","options":["12.9元","13.9元","15.9元"],"points":10,"q":"“1+1随心配”的价格是？"},{"answer":1,"explain":"10:30。猪柳蛋麦满分党都是掐着点起床的。","options":["10:00","10:30","11:00"],"points":10,"q":"麦当劳早餐一般供应到几点？"},{"answer":1,"explain":"巨无霸酱，灵魂所在。","options":["千岛酱","巨无霸酱","沙拉酱"],"points":10,"q":"巨无霸里的酱官方叫什么？"},{"answer":0,"explain":"奥利奥麦旋风，永远的神。","options":["奥利奥","草莓酱","芒果丁"],"points":10,"q":"麦旋风的经典搭配是？"},{"answer":0,"explain":"猪柳蛋麦满分，过了10:30就吃不到。","options":["猪柳蛋麦满分","巨无霸","麦辣鸡腿堡"],"points":10,"q":"以下哪个是麦当劳早餐时段独有的？"}],"title":"麦门浓度测试"};
+const QUIZ = {"title":"麦门浓度测试","knowledge":[{"q":"巨无霸里有几层牛肉饼？","options":["1层","2层","3层"],"answer":1,"points":10,"explain":"巨无霸 = 两层纯牛肉饼，这都不知道还敢说自己是麦门人？"},{"q":"麦乐鸡块常规装有几块？","options":["4块","5块","6块"],"answer":1,"points":10,"explain":"5块。4块那是哄小孩的儿童套餐。"},{"q":"“1+1随心配”的价格是？","options":["12.9元","13.9元","15.9元"],"answer":1,"points":10,"explain":"13.9，打工人的续命丹。"},{"q":"麦当劳早餐一般供应到几点？","options":["10:00","10:30","11:00"],"answer":1,"points":10,"explain":"10:30。猪柳蛋麦满分党都是掐着点起床的。"},{"q":"巨无霸里的酱官方叫什么？","options":["千岛酱","巨无霸酱","沙拉酱"],"answer":1,"points":10,"explain":"巨无霸酱，灵魂所在。"},{"q":"麦旋风的经典搭配是？","options":["奥利奥","草莓酱","芒果丁"],"answer":0,"points":10,"explain":"奥利奥麦旋风，永远的神。"},{"q":"以下哪个是麦当劳早餐时段独有的？","options":["猪柳蛋麦满分","巨无霸","麦辣鸡腿堡"],"answer":0,"points":10,"explain":"猪柳蛋麦满分，过了10:30就吃不到。"},{"q":"巨无霸有几片面包？","options":["2片","3片","4片"],"answer":1,"points":10,"explain":"三层面包夹两层肉，这才是巨无霸的完全体。"},{"q":"麦当劳中国第一家店开在哪？","options":["北京","上海","深圳"],"answer":2,"points":10,"explain":"1990年深圳东门，麦门圣地。"},{"q":"麦当劳的“M”标志官方叫什么？","options":["金色拱门","大M","麦当劳标"],"answer":0,"points":10,"explain":"Golden Arches，金拱门本门。"},{"q":"巨无霸在美国叫什么？","options":["Big Mac","Mega Mac","Super Burger"],"answer":0,"points":10,"explain":"Big Mac，1968年诞生，比很多人的年纪都大。"},{"q":"麦旋风的勺子为什么是方的？","options":["拿来搅拌","好看","省塑料"],"answer":0,"points":10,"explain":"方勺就是搅拌器，插进机器里搅的。冷知识之王。"}],"habit":[{"q":"你吃麦当劳的频率？","options":["每周3次以上","每周1-2次","每月几次","想起来才吃"],"tags":["干饭战士","稳定输出","随缘麦门","云信徒"]},{"q":"你的本命单品是？","options":["巨无霸","麦辣鸡腿堡","薯条","麦乐鸡","板烧鸡腿堡"],"tags":["经典派","辣党","薯条教","快乐鸡","肉食者"]},{"q":"深夜（22点后）点过麦当劳吗？","options":["经常","偶尔","从不"],"tags":["深夜党","偶尔放纵","自律党"]},{"q":"你一般怎么吃麦当劳？","options":["堂食","外卖","到店自取"],"tags":["堂食党","外卖党","自取党"]},{"q":"会为了优惠券特意去吗？","options":["会，蹲点抢","看情况","从不，原价吃"],"tags":["薅羊毛党","精打细算","原价战神"]},{"q":"多久不吃麦当劳会想？","options":["一天","一周","一月"],"tags":["重度上瘾","中度依赖","轻度想念"]}]};
 
 const LEVELS=[[80,"麦门祖师"],[60,"麦门长老"],[40,"麦门信徒"],[0,"麦门路人"]];
-const ROASTS={"深夜党":"深夜的emo，一半是生活，一半是麦辣鸡翅。","薯条教":"你的血管里流的不是血，是番茄酱。","快乐鸡":"麦乐鸡蘸酱，你蘸的是童年。","经典派":"巨无霸，永远的神，不接受反驳。","辣党":"无辣不欢，麦辣鸡腿堡是你的本命没跑了。","肉食者":"板烧一入口，就知有没有。","嘴强王者":"题全对，单没点——麦门的理论家，实践的逃兵。","身体很诚实":"题没答对几道，但吃得比谁都勤。麦门欢迎实干家。","云信徒":"想起来才吃？先点一单再回来审判。","随缘麦门":"想起来才吃，吃的就是个随缘。","干饭战士":"一周三刷以上，麦当劳你家开的？","稳定输出":"细水长流，麦门需要你这样的中坚力量。","自律党":"深夜从不点单，自制力拉满，respect。","偶尔放纵":"偶尔深夜一单，是给生活的一点甜。"};
+const ROASTS={"深夜党":"深夜的emo，一半是生活，一半是麦辣鸡翅。","薯条教":"你的血管里流的不是血，是番茄酱。","快乐鸡":"麦乐鸡蘸酱，你蘸的是童年。","经典派":"巨无霸，永远的神，不接受反驳。","辣党":"无辣不欢，麦辣鸡腿堡是你的本命没跑了。","肉食者":"板烧一入口，就知有没有。","嘴强王者":"题全对，单没点——麦门的理论家，实践的逃兵。","身体很诚实":"题没答对几道，但吃得比谁都勤。麦门欢迎实干家。","云信徒":"想起来才吃？先点一单再回来审判。","随缘麦门":"想起来才吃，吃的就是个随缘。","干饭战士":"一周三刷以上，麦当劳你家开的？","稳定输出":"细水长流，麦门需要你这样的中坚力量。","自律党":"深夜从不点单，自制力拉满，respect。","偶尔放纵":"偶尔深夜一单，是给生活的一点甜。","堂食党":"薯条必须现炸现吃，仪式感拉满。","外卖党":"外卖能到的距离，都是你的麦门领地。","自取党":"为了省配送费多走两步，精明的麦门人。","原价战神":"原价吃麦当劳，真正的实力派。","重度上瘾":"一天不吃浑身难受？麦门认证重度患者。","中度依赖":"一周一单，剂量刚刚好。","轻度想念":"一月一想，细水长流。"};
 // 网页版没有真实订单，用习惯题估算"行为分"
 const FREQ_SCORE=[90,70,45,20], NIGHT_BONUS=[8,3,0];
 
@@ -259,7 +260,7 @@ function nextQ(){idx++; if(idx<ALL.length)render(); else finish()}
 let R=null;
 function finish(){
   const quizPct=maxScore?score/maxScore*100:0;
-  const behavior=Math.min(100,FREQ_SCORE[picks[7]]+NIGHT_BONUS[picks[9]]);
+  const behavior=Math.min(100,FREQ_SCORE[picks[12]]+NIGHT_BONUS[picks[14]]);
   const total=Math.round(quizPct*0.4+behavior*0.6);
   const level=LEVELS.find(l=>total>=l[0])[1];
   const tags=[];
@@ -276,6 +277,24 @@ function finish(){
   show("result");
 }
 
+async function shareCard(){
+  if($("cardImg").classList.contains("hide")) makeCard();
+  const text=`我在「麦门审判」拿下「${R.level}」，综合${R.total}分！你敢来测吗？`;
+  const url="https://ttnan.github.io/mcd-maimen-trial/";
+  try{
+    const blob=await (await fetch($("cardImg").src)).blob();
+    const file=new File([blob],"麦门审判-"+R.level+".png",{type:"image/png"});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:"麦门审判",text});
+      return;
+    }
+    throw new Error("no-share");
+  }catch(e){
+    if(e&&e.name==="AbortError") return;
+    try{ await navigator.clipboard.writeText(text+" "+url); alert("分享链接已复制，快发给朋友吧！"); }
+    catch(_){ $("dl").click(); }
+  }
+}
 function rr(x,px,py,w,h,r){x.beginPath();x.moveTo(px+r,py);x.arcTo(px+w,py,px+w,py+h,r);x.arcTo(px+w,py+h,px,py+h,r);x.arcTo(px,py+h,px,py,r);x.arcTo(px,py,px+w,py,r);x.closePath()}
 function wrap(ctx,text,x,y,maxW,lh){
   let line="",lines=[];
