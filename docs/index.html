@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>麦门审判 · 测测你的麦门浓度</title>
+<meta name="description" content="10 道题测出你的麦门段位：路人、信徒、长老还是祖师？答完生成毒舌分享卡。">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:#0d0d0d;color:#f5f5f5;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;display:flex;justify-content:center;padding:20px 16px}
+.wrap{width:100%;max-width:440px}
+.card{background:linear-gradient(160deg,#1a0505,#2b0a06 60%,#120404);border:1px solid #5a1f12;border-radius:20px;padding:28px 22px;box-shadow:0 12px 48px rgba(228,0,43,.25)}
+.kicker{color:#f5c518;letter-spacing:.35em;font-size:12px;text-align:center}
+h1{text-align:center;font-size:36px;margin:10px 0 6px;background:linear-gradient(90deg,#ffcf3f,#e4002b);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{text-align:center;color:#aaa;font-size:14px;line-height:1.7}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:15px;font-size:17px;font-weight:600;cursor:pointer;margin-top:14px;font-family:inherit}
+.primary{background:linear-gradient(90deg,#ffbc0d,#ff8a00);color:#2b0a06}
+.ghost{background:transparent;border:1px solid #5a1f12;color:#ddd}
+.progress{height:6px;background:#2a1210;border-radius:3px;overflow:hidden;margin-bottom:18px}
+.progress i{display:block;height:100%;background:#ffbc0d;width:0;transition:width .3s}
+.qno{color:#f5c518;font-size:13px;letter-spacing:.1em}
+.q{font-size:20px;line-height:1.5;margin:8px 0 18px}
+.opt{display:block;width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid #4a1a10;color:#f5f5f5;border-radius:12px;padding:14px 16px;font-size:16px;margin-bottom:10px;cursor:pointer;font-family:inherit}
+.opt:hover{border-color:#ffbc0d}
+.opt.right{background:rgba(46,160,67,.18);border-color:#2ea043}
+.opt.wrong{background:rgba(228,0,43,.18);border-color:#e4002b}
+.explain{min-height:48px;font-size:14px;line-height:1.6;color:#ffe9a8;margin-top:6px}
+.score{text-align:center;color:#999;font-size:13px;margin-bottom:14px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0}
+.tag{background:rgba(228,0,43,.16);border:1px solid #e4002b;color:#ffb3c0;border-radius:999px;padding:6px 14px;font-size:14px}
+.roast{background:rgba(245,197,24,.08);border-left:3px solid #f5c518;padding:12px 14px;border-radius:0 10px 10px 0;font-size:15px;line-height:1.7;margin:16px 0;color:#ffe9a8}
+.note{font-size:13px;color:#888;line-height:1.7;margin-top:16px}
+.note a,.foot a{color:#ffbc0d}
+.foot{margin-top:18px;text-align:center;color:#666;font-size:12px;line-height:1.8}
+.hide{display:none}
+#cardImg{width:100%;border-radius:14px;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 首页 -->
+<section id="home" class="card">
+  <div class="kicker">麦 门 审 判</div>
+  <h1>麦门浓度测试</h1>
+  <p class="sub">你说你是麦门信徒？<br>7 道麦门知识题 + 3 道习惯题，答错直接开嘲讽。<br>测出你的段位：路人 / 信徒 / 长老 / 祖师</p>
+  <button class="btn primary" onclick="start()">开始审判</button>
+  <p class="note">网页版不需要登录。想用<b>真实订单</b>来审判（订单不会骗人），请用 GitHub 上的完整版接入麦当劳官方 MCP。</p>
+</section>
+
+<!-- 答题 -->
+<section id="quiz" class="card hide">
+  <div class="progress"><i id="bar"></i></div>
+  <div class="qno" id="qno"></div>
+  <div class="q" id="qtext"></div>
+  <div id="opts"></div>
+  <div class="explain" id="explain"></div>
+  <button class="btn primary hide" id="next" onclick="nextQ()">下一题</button>
+</section>
+
+<!-- 结果 -->
+<section id="result" class="card hide">
+  <div class="kicker">审 判 结 果</div>
+  <h1 id="level"></h1>
+  <div class="score" id="scoreLine"></div>
+  <div class="tags" id="tags"></div>
+  <div class="roast" id="roast"></div>
+  <button class="btn primary" onclick="makeCard()">生成分享卡</button>
+  <img id="cardImg" class="hide" alt="麦门审判分享卡">
+  <p class="note hide" id="saveTip">手机上长按图片保存，发给朋友看看谁更麦门。</p>
+  <a id="dl" class="hide"></a>
+  <button class="btn ghost" onclick="location.reload()">再审一次</button>
+  <p class="note">这是答题版。完整版会读取你在麦当劳的真实历史订单（时段、本命单品、客单价、0 元单），反差梗更准：题全对但一单没点叫「嘴强王者」。<a href="https://github.com/TTNAN/mcd-maimen-trial" target="_blank">去 GitHub 看完整版</a></p>
+</section>
+
+<div class="foot">麦当劳程序员创意开发大赛参赛作品 · <a href="https://github.com/TTNAN/mcd-maimen-trial" target="_blank">mcd-maimen-trial</a><br>觉得好玩就点个 Star ⭐</div>
+</div>
+
+<script>
+// 题库与规则与仓库 quiz.json / src/personas.py 保持一致
+const QUIZ = {"habit":[{"options":["每周3次以上","每周1-2次","每月几次","想起来才吃"],"q":"你吃麦当劳的频率？","tags":["干饭战士","稳定输出","随缘麦门","云信徒"]},{"options":["巨无霸","麦辣鸡腿堡","薯条","麦乐鸡","板烧鸡腿堡"],"q":"你的本命单品是？","tags":["经典派","辣党","薯条教","快乐鸡","肉食者"]},{"options":["经常","偶尔","从不"],"q":"深夜（22点后）点过麦当劳吗？","tags":["深夜党","偶尔放纵","自律党"]}],"knowledge":[{"answer":1,"explain":"巨无霸 = 两层纯牛肉饼，这都不知道还敢说自己是麦门人？","options":["1层","2层","3层"],"points":10,"q":"巨无霸里有几层牛肉饼？"},{"answer":1,"explain":"5块。4块那是哄小孩的儿童套餐。","options":["4块","5块","6块"],"points":10,"q":"麦乐鸡块常规装有几块？"},{"answer":1,"explain":"13.9，打工人的续命丹。","options":["12.9元","13.9元","15.9元"],"points":10,"q":"“1+1随心配”的价格是？"},{"answer":1,"explain":"10:30。猪柳蛋麦满分党都是掐着点起床的。","options":["10:00","10:30","11:00"],"points":10,"q":"麦当劳早餐一般供应到几点？"},{"answer":1,"explain":"巨无霸酱，灵魂所在。","options":["千岛酱","巨无霸酱","沙拉酱"],"points":10,"q":"巨无霸里的酱官方叫什么？"},{"answer":0,"explain":"奥利奥麦旋风，永远的神。","options":["奥利奥","草莓酱","芒果丁"],"points":10,"q":"麦旋风的经典搭配是？"},{"answer":0,"explain":"猪柳蛋麦满分，过了10:30就吃不到。","options":["猪柳蛋麦满分","巨无霸","麦辣鸡腿堡"],"points":10,"q":"以下哪个是麦当劳早餐时段独有的？"}],"title":"麦门浓度测试"};
+
+const LEVELS=[[80,"麦门祖师"],[60,"麦门长老"],[40,"麦门信徒"],[0,"麦门路人"]];
+const ROASTS={"深夜党":"深夜的emo，一半是生活，一半是麦辣鸡翅。","薯条教":"你的血管里流的不是血，是番茄酱。","快乐鸡":"麦乐鸡蘸酱，你蘸的是童年。","经典派":"巨无霸，永远的神，不接受反驳。","辣党":"无辣不欢，麦辣鸡腿堡是你的本命没跑了。","肉食者":"板烧一入口，就知有没有。","嘴强王者":"题全对，单没点——麦门的理论家，实践的逃兵。","身体很诚实":"题没答对几道，但吃得比谁都勤。麦门欢迎实干家。","云信徒":"想起来才吃？先点一单再回来审判。","随缘麦门":"想起来才吃，吃的就是个随缘。","干饭战士":"一周三刷以上，麦当劳你家开的？","稳定输出":"细水长流，麦门需要你这样的中坚力量。","自律党":"深夜从不点单，自制力拉满，respect。","偶尔放纵":"偶尔深夜一单，是给生活的一点甜。"};
+// 网页版没有真实订单，用习惯题估算"行为分"
+const FREQ_SCORE=[90,70,45,20], NIGHT_BONUS=[8,3,0];
+
+const ALL=[...QUIZ.knowledge.map(q=>({...q,k:true})),...QUIZ.habit.map(q=>({...q,k:false}))];
+let idx=0, score=0, maxScore=0, habit=[], picks=[];
+const $=id=>document.getElementById(id);
+
+function show(id){["home","quiz","result"].forEach(s=>$(s).classList.toggle("hide",s!==id));window.scrollTo(0,0)}
+function start(){show("quiz");render()}
+function render(){
+  const q=ALL[idx];
+  $("bar").style.width=(idx/ALL.length*100)+"%";
+  $("qno").textContent=(q.k?"知识题 ":"习惯题 ")+(idx+1)+" / "+ALL.length;
+  $("qtext").textContent=q.q;
+  $("explain").textContent="";
+  $("next").classList.add("hide");
+  $("opts").innerHTML="";
+  q.options.forEach((o,i)=>{
+    const b=document.createElement("button");
+    b.className="opt";b.textContent=String.fromCharCode(65+i)+". "+o;
+    b.onclick=()=>pick(i);
+    $("opts").appendChild(b);
+  });
+}
+function pick(i){
+  const q=ALL[idx], btns=[...document.querySelectorAll(".opt")];
+  btns.forEach(b=>b.disabled=true);
+  picks.push(i);
+  if(q.k){
+    maxScore+=q.points;
+    if(i===q.answer){score+=q.points;btns[i].classList.add("right");$("explain").textContent="✓ "+q.explain}
+    else{btns[i].classList.add("wrong");btns[q.answer].classList.add("right");$("explain").textContent="✗ "+q.explain}
+    $("next").textContent=idx===ALL.length-1?"看审判结果":"下一题";
+    $("next").classList.remove("hide");
+  }else{
+    habit.push(q.tags[i]);
+    btns[i].classList.add("right");
+    setTimeout(nextQ,350);
+  }
+}
+function nextQ(){idx++; if(idx<ALL.length)render(); else finish()}
+
+let R=null;
+function finish(){
+  const quizPct=maxScore?score/maxScore*100:0;
+  const behavior=Math.min(100,FREQ_SCORE[picks[7]]+NIGHT_BONUS[picks[9]]);
+  const total=Math.round(quizPct*0.4+behavior*0.6);
+  const level=LEVELS.find(l=>total>=l[0])[1];
+  const tags=[];
+  if(quizPct>=70&&behavior<40)tags.push("嘴强王者");
+  else if(quizPct<40&&behavior>=60)tags.push("身体很诚实");
+  habit.forEach(t=>{if(!tags.includes(t)&&tags.length<4)tags.push(t)});
+  const roast=tags.slice(0,2).map(t=>ROASTS[t]||"").filter(Boolean).join(" ")||"麦门大门常打开，欢迎下次再来。";
+  R={level,total,quiz:Math.round(quizPct),behavior,tags,roast};
+  $("level").textContent=level;
+  $("scoreLine").textContent=`综合 ${total} 分 · 答题 ${R.quiz} 分 · 行为 ${behavior} 分`;
+  $("tags").innerHTML=tags.map(t=>`<span class="tag">${t}</span>`).join("");
+  $("roast").textContent=roast;
+  show("result");
+}
+
+function wrap(ctx,text,x,y,maxW,lh){
+  let line="",lines=[];
+  for(const ch of text){ if(ctx.measureText(line+ch).width>maxW){lines.push(line);line=ch}else line+=ch }
+  lines.push(line);
+  lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lh));
+  return lines.length*lh;
+}
+function makeCard(){
+  const W=1080,H=1440,c=document.createElement("canvas");c.width=W;c.height=H;
+  const x=c.getContext("2d"), F='-apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+  const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,"#1a0505");g.addColorStop(.6,"#2b0a06");g.addColorStop(1,"#120404");
+  x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.strokeStyle="#5a1f12";x.lineWidth=4;x.strokeRect(40,40,W-80,H-80);
+  x.textAlign="center";
+  x.fillStyle="#f5c518";x.font=`32px ${F}`;x.fillText("麦  门  审  判",W/2,170);
+  const tg=x.createLinearGradient(240,0,840,0);tg.addColorStop(0,"#ffcf3f");tg.addColorStop(1,"#e4002b");
+  x.fillStyle=tg;x.font=`bold 150px ${F}`;x.fillText(R.level,W/2,360);
+  x.fillStyle="#aaa";x.font=`38px ${F}`;x.fillText(`综合 ${R.total} 分 · 答题 ${R.quiz} · 行为 ${R.behavior}`,W/2,450);
+  // tags
+  x.font=`40px ${F}`;
+  const pads=36,gap=24,ws=R.tags.map(t=>x.measureText(t).width+pads*2);
+  let tw=ws.reduce((a,b)=>a+b,0)+gap*(ws.length-1),tx=(W-tw)/2,ty=540;
+  R.tags.forEach((t,i)=>{
+    x.fillStyle="rgba(228,0,43,.18)";x.strokeStyle="#e4002b";x.lineWidth=3;
+    x.beginPath();x.roundRect(tx,ty,ws[i],84,42);x.fill();x.stroke();
+    x.fillStyle="#ffb3c0";x.fillText(t,tx+ws[i]/2,ty+56);tx+=ws[i]+gap;
+  });
+  // roast
+  x.fillStyle="rgba(245,197,24,.08)";x.fillRect(120,700,W-240,360);
+  x.fillStyle="#f5c518";x.fillRect(120,700,10,360);
+  x.textAlign="left";x.fillStyle="#ffe9a8";x.font=`46px ${F}`;
+  wrap(x,"「"+R.roast+"」",170,790,W-340,74);
+  x.textAlign="center";x.fillStyle="#ddd";x.font=`40px ${F}`;
+  x.fillText("你敢来测吗？",W/2,1190);
+  x.fillStyle="#ffbc0d";x.font=`34px ${F}`;
+  x.fillText("ttnan.github.io/mcd-maimen-trial",W/2,1260);
+  x.fillStyle="#666";x.font=`28px ${F}`;
+  x.fillText("麦当劳程序员创意开发大赛参赛作品",W/2,1330);
+  const url=c.toDataURL("image/png");
+  $("cardImg").src=url;$("cardImg").classList.remove("hide");$("saveTip").classList.remove("hide");
+  const a=$("dl");a.href=url;a.download="麦门审判-"+R.level+".png";
+  if(!/Mobi|Android|iPhone/i.test(navigator.userAgent))a.click();
+}
+</script>
+</body>
+</html>
