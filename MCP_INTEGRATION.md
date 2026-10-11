@@ -1,6 +1,13 @@
 # 麦当劳 MCP 接入说明
 
-## 使用的 MCP Server
+## 双版本说明
+
+本项目有两个版本，分工如下：
+
+- **网页版**（`docs/index.html`，[在线体验](https://ttnan.github.io/mcd-maimen-trial/)）：纯前端 quiz，**不调用任何 MCP 接口**，行为分用习惯题答案估算。无需登录、无 token，零隐私风险。
+- **完整版**（`trial.py`）：调用下方 MCP Tool 拉取真实历史订单做行为分析，需要用户自备 `MCD_MCP_TOKEN`。
+
+## 使用的 MCP Server（完整版）
 
 - **Server**：麦当劳中国官方 MCP Server
 - **接入地址**：`https://mcp.mcd.cn`
