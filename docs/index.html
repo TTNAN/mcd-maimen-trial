@@ -7,46 +7,131 @@
 <meta name="description" content="10 道题测出你的麦门段位：路人、信徒、长老还是祖师？答完生成毒舌分享卡。">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
-body{background:#0d0d0d;color:#f5f5f5;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;display:flex;justify-content:center;padding:20px 16px}
-.wrap{width:100%;max-width:440px}
-.card{background:linear-gradient(160deg,#1a0505,#2b0a06 60%,#120404);border:1px solid #5a1f12;border-radius:20px;padding:28px 22px;box-shadow:0 12px 48px rgba(228,0,43,.25)}
-.kicker{color:#f5c518;letter-spacing:.35em;font-size:12px;text-align:center}
-h1{text-align:center;font-size:36px;margin:10px 0 6px;background:linear-gradient(90deg,#ffcf3f,#e4002b);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{text-align:center;color:#aaa;font-size:14px;line-height:1.7}
-.btn{display:block;width:100%;border:0;border-radius:14px;padding:15px;font-size:17px;font-weight:600;cursor:pointer;margin-top:14px;font-family:inherit}
-.primary{background:linear-gradient(90deg,#ffbc0d,#ff8a00);color:#2b0a06}
-.ghost{background:transparent;border:1px solid #5a1f12;color:#ddd}
-.progress{height:6px;background:#2a1210;border-radius:3px;overflow:hidden;margin-bottom:18px}
-.progress i{display:block;height:100%;background:#ffbc0d;width:0;transition:width .3s}
-.qno{color:#f5c518;font-size:13px;letter-spacing:.1em}
-.q{font-size:20px;line-height:1.5;margin:8px 0 18px}
-.opt{display:block;width:100%;text-align:left;background:rgba(255,255,255,.04);border:1px solid #4a1a10;color:#f5f5f5;border-radius:12px;padding:14px 16px;font-size:16px;margin-bottom:10px;cursor:pointer;font-family:inherit}
-.opt:hover{border-color:#ffbc0d}
+html{scroll-behavior:smooth}
+body{background:#0b0605;color:#f5f5f5;font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;overflow-x:hidden}
+.wrap{width:100%;max-width:480px;margin:0 auto;padding:0 16px 40px;position:relative;z-index:1}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;margin:0 -16px;padding:64px 24px 56px;text-align:center;overflow:hidden;
+  background:url('../assets/poster.png') center 20%/cover no-repeat #120404}
+.hero::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(11,6,5,.55) 0%,rgba(11,6,5,.25) 45%,rgba(11,6,5,.92) 100%)}
+.hero>*{position:relative;z-index:2}
+.hero .kicker{color:#FFC72C;letter-spacing:.5em;font-size:13px;font-weight:600;text-indent:.5em}
+.hero h1{font-size:52px;line-height:1.15;margin:14px 0 10px;
+  background:linear-gradient(100deg,#ffe9a8 10%,#FFC72C 40%,#DA291C 90%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 24px rgba(218,41,28,.45))}
+.hero .sub{color:#e8d9b8;font-size:15px;line-height:1.9}
+.hero .cta{display:inline-block;margin-top:22px;padding:15px 44px;font-size:17px;font-weight:700;color:#2b0a06;
+  background:linear-gradient(90deg,#FFC72C,#ff9d00);border-radius:999px;cursor:pointer;border:0;font-family:inherit;
+  box-shadow:0 8px 32px rgba(255,199,44,.35);transition:transform .2s}
+.hero .cta:hover{transform:translateY(-2px) scale(1.03)}
+.float{position:absolute;font-size:34px;z-index:1;opacity:.9;filter:drop-shadow(0 6px 12px rgba(0,0,0,.5));
+  animation:float 5s ease-in-out infinite;pointer-events:none}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-18px) rotate(8deg)}}
+
+/* ---------- TICKER ---------- */
+.ticker{margin:0 -16px;overflow:hidden;background:#DA291C;border-top:2px solid #FFC72C;border-bottom:2px solid #FFC72C;
+  transform:rotate(-1.2deg) scale(1.02)}
+.ticker .track{display:flex;white-space:nowrap;padding:10px 0;animation:tick 22s linear infinite;width:max-content}
+.ticker span{color:#fff;font-size:14px;font-weight:600;padding:0 18px;letter-spacing:.1em}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ---------- 段位 ---------- */
+.levels{padding:38px 0 8px;text-align:center}
+.sec-title{font-size:22px;margin-bottom:4px}
+.sec-title b{color:#FFC72C}
+.sec-sub{color:#a08c6d;font-size:13px;margin-bottom:18px}
+.lv-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lv{background:linear-gradient(160deg,#200b08,#160705);border:1px solid #5a2a18;border-radius:16px;padding:18px 10px;
+  transition:transform .2s,border-color .2s}
+.lv:hover{transform:translateY(-3px);border-color:#FFC72C}
+.lv .e{font-size:34px}
+.lv .n{font-size:17px;font-weight:700;margin:8px 0 4px;color:#FFC72C}
+.lv .d{font-size:12px;color:#a08c6d;line-height:1.6}
+.lv.top{border-color:#FFC72C;box-shadow:0 0 24px rgba(255,199,44,.18)}
+
+/* ---------- QUIZ 卡片 ---------- */
+.card{background:linear-gradient(160deg,#1e0a07,#2b0d08 55%,#120404);
+  border:1px solid #6b2a16;border-radius:22px;padding:30px 24px;margin-top:30px;
+  box-shadow:0 16px 60px rgba(218,41,28,.22),inset 0 1px 0 rgba(255,199,44,.15);position:relative}
+.card::before{content:"🍔";position:absolute;top:-22px;right:18px;font-size:40px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+.kicker{color:#FFC72C;letter-spacing:.35em;font-size:12px;text-align:center;font-weight:600}
+h2.rt{text-align:center;font-size:32px;margin:10px 0 6px;
+  background:linear-gradient(90deg,#ffcf3f,#DA291C);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{text-align:center;color:#c9b48f;font-size:14px;line-height:1.8}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:15px;font-size:17px;font-weight:700;cursor:pointer;margin-top:16px;font-family:inherit}
+.primary{background:linear-gradient(90deg,#FFC72C,#ff9d00);color:#2b0a06;box-shadow:0 6px 24px rgba(255,199,44,.3)}
+.ghost{background:transparent;border:1px solid #6b2a16;color:#ddd;margin-top:10px}
+.progress{height:8px;background:#2a1210;border-radius:4px;overflow:hidden;margin-bottom:18px;border:1px solid #4a1f10}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,#FFC72C,#DA291C);width:0;transition:width .3s}
+.qcat{display:inline-block;font-size:12px;font-weight:700;color:#2b0a06;background:#FFC72C;border-radius:999px;padding:3px 12px;margin-bottom:8px}
+.qno{color:#FFC72C;font-size:13px;letter-spacing:.1em}
+.q{font-size:20px;line-height:1.5;margin:8px 0 18px;font-weight:600}
+.opt{display:block;width:100%;text-align:left;background:rgba(255,255,255,.045);border:1px solid #5a2a18;color:#f5f5f5;
+  border-radius:14px;padding:15px 16px;font-size:16px;margin-bottom:10px;cursor:pointer;font-family:inherit;transition:all .15s}
+.opt:hover:not(:disabled){border-color:#FFC72C;background:rgba(255,199,44,.08);transform:translateX(4px)}
+.opt:disabled{cursor:default;opacity:.85}
 .opt.right{background:rgba(46,160,67,.18);border-color:#2ea043}
-.opt.wrong{background:rgba(228,0,43,.18);border-color:#e4002b}
+.opt.wrong{background:rgba(218,41,28,.22);border-color:#DA291C}
 .explain{min-height:48px;font-size:14px;line-height:1.6;color:#ffe9a8;margin-top:6px}
-.score{text-align:center;color:#999;font-size:13px;margin-bottom:14px}
+.score{text-align:center;color:#a08c6d;font-size:14px;margin-bottom:14px}
+.score b{color:#FFC72C;font-size:22px}
 .tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0}
-.tag{background:rgba(228,0,43,.16);border:1px solid #e4002b;color:#ffb3c0;border-radius:999px;padding:6px 14px;font-size:14px}
-.roast{background:rgba(245,197,24,.08);border-left:3px solid #f5c518;padding:12px 14px;border-radius:0 10px 10px 0;font-size:15px;line-height:1.7;margin:16px 0;color:#ffe9a8}
-.note{font-size:13px;color:#888;line-height:1.7;margin-top:16px}
-.note a,.foot a{color:#ffbc0d}
-.foot{margin-top:18px;text-align:center;color:#666;font-size:12px;line-height:1.8}
-.hide{display:none}
-#cardImg{width:100%;border-radius:14px;margin-top:14px}
+.tag{background:rgba(218,41,28,.16);border:1px solid #DA291C;color:#ffb3c0;border-radius:999px;padding:7px 15px;font-size:14px;font-weight:600}
+.roast{background:rgba(255,199,44,.08);border-left:3px solid #FFC72C;padding:14px 16px;border-radius:0 12px 12px 0;
+  font-size:15px;line-height:1.8;margin:16px 0;color:#ffe9a8}
+.note{font-size:13px;color:#8a755a;line-height:1.8;margin-top:16px;text-align:center}
+.note a{color:#FFC72C}
+.foot{margin-top:34px;text-align:center;color:#6b5a44;font-size:12px;line-height:2}
+.foot a{color:#FFC72C}
+.foot .m{font-size:26px;font-weight:900;color:#FFC72C}
+.hide{display:none!important}
+#cardImg{width:100%;border-radius:14px;margin-top:14px;border:1px solid #6b2a16}
+.bigscore{font-size:64px;font-weight:900;text-align:center;color:#FFC72C;text-shadow:0 4px 30px rgba(255,199,44,.4)}
+.bigscore small{font-size:18px;color:#a08c6d;font-weight:400}
 </style>
 </head>
 <body>
-<div class="wrap">
 
-<!-- 首页 -->
-<section id="home" class="card">
+<!-- HERO -->
+<header class="hero">
+  <span class="float" style="top:12%;left:8%">🍟</span>
+  <span class="float" style="top:20%;right:10%;animation-delay:1s">🥤</span>
+  <span class="float" style="top:58%;left:5%;animation-delay:2s">🍦</span>
+  <span class="float" style="top:66%;right:6%;animation-delay:.5s">🍗</span>
+  <span class="float" style="top:38%;left:14%;animation-delay:2.8s;font-size:26px">🍔</span>
   <div class="kicker">麦 门 审 判</div>
   <h1>麦门浓度测试</h1>
-  <p class="sub">你说你是麦门信徒？<br>7 道麦门知识题 + 3 道习惯题，答错直接开嘲讽。<br>测出你的段位：路人 / 信徒 / 长老 / 祖师</p>
+  <p class="sub">你说你是麦门信徒？<br>10 道题 + 毒舌判词，看看你是路人还是祖师</p>
+  <button class="cta" onclick="document.getElementById('home').scrollIntoView({behavior:'smooth'})">开始审判 🍔</button>
+</header>
+
+<!-- 跑马灯 -->
+<div class="ticker"><div class="track" id="tickerTrack"></div></div>
+
+<div class="wrap">
+
+<!-- 段位预览 -->
+<section class="levels">
+  <div class="sec-title">四大段位，<b>你在哪一层？</b></div>
+  <div class="sec-sub">综合得分 = 答题 40% + 行为 60% · 订单不会骗人</div>
+  <div class="lv-grid">
+    <div class="lv"><div class="e">🌱</div><div class="n">麦门路人</div><div class="d">40 分以下<br>路过比进去的次数多</div></div>
+    <div class="lv"><div class="e">🙏</div><div class="n">麦门信徒</div><div class="d">40 – 59 分<br>虔诚，但还能更虔诚</div></div>
+    <div class="lv"><div class="e">🎖️</div><div class="n">麦门长老</div><div class="d">60 – 79 分<br>谈笑间巨无霸灰飞烟灭</div></div>
+    <div class="lv top"><div class="e">👑</div><div class="n">麦门祖师</div><div class="d">80 分以上<br>血管里流的是番茄酱</div></div>
+  </div>
+</section>
+
+<!-- 答题入口 -->
+<section id="home" class="card">
+  <div class="kicker">审 判 即 将 开 始</div>
+  <h2 class="rt">你敢接受审判吗？</h2>
+  <p class="sub">7 道麦门知识题：巨无霸几层肉饼？1+1 随心配多少钱？<br>3 道习惯题：频率、本命单品、深夜放纵<br>答错直接开嘲讽，答完生成你的专属判词卡</p>
   <button class="btn primary" onclick="start()">开始审判</button>
-  <p class="note">网页版不需要登录。想用<b>真实订单</b>来审判（订单不会骗人），请用 GitHub 上的完整版接入麦当劳官方 MCP。</p>
+  <p class="note">网页版无需登录，数据不出手机。<br>想用<b>真实历史订单</b>来审判（反差梗更准），请看 GitHub 完整版。</p>
 </section>
 
 <!-- 答题 -->
@@ -62,19 +147,24 @@ h1{text-align:center;font-size:36px;margin:10px 0 6px;background:linear-gradient
 <!-- 结果 -->
 <section id="result" class="card hide">
   <div class="kicker">审 判 结 果</div>
-  <h1 id="level"></h1>
+  <div class="bigscore"><span id="bigNum"></span><small> 分</small></div>
+  <h2 class="rt" id="level"></h2>
   <div class="score" id="scoreLine"></div>
   <div class="tags" id="tags"></div>
   <div class="roast" id="roast"></div>
-  <button class="btn primary" onclick="makeCard()">生成分享卡</button>
+  <button class="btn primary" onclick="makeCard()">生成分享卡 📸</button>
   <img id="cardImg" class="hide" alt="麦门审判分享卡">
-  <p class="note hide" id="saveTip">手机上长按图片保存，发给朋友看看谁更麦门。</p>
+  <p class="note hide" id="saveTip">手机上长按图片保存，发给朋友看看谁更麦门 🍟</p>
   <a id="dl" class="hide"></a>
   <button class="btn ghost" onclick="location.reload()">再审一次</button>
-  <p class="note">这是答题版。完整版会读取你在麦当劳的真实历史订单（时段、本命单品、客单价、0 元单），反差梗更准：题全对但一单没点叫「嘴强王者」。<a href="https://github.com/TTNAN/mcd-maimen-trial" target="_blank">去 GitHub 看完整版</a></p>
+  <p class="note">这是答题版。完整版会读取你的真实历史订单：题全对但一单没点叫「嘴强王者」。<br><a href="https://github.com/TTNAN/mcd-maimen-trial" target="_blank">去 GitHub 看完整版 →</a></p>
 </section>
 
-<div class="foot">麦当劳程序员创意开发大赛参赛作品 · <a href="https://github.com/TTNAN/mcd-maimen-trial" target="_blank">mcd-maimen-trial</a><br>觉得好玩就点个 Star ⭐</div>
+<div class="foot">
+  <div class="m">M</div>
+  麦当劳程序员创意开发大赛参赛作品<br>
+  <a href="https://github.com/TTNAN/mcd-maimen-trial" target="_blank">mcd-maimen-trial</a> · 觉得好玩就点个 Star ⭐
+</div>
 </div>
 
 <script>
@@ -86,16 +176,23 @@ const ROASTS={"深夜党":"深夜的emo，一半是生活，一半是麦辣鸡�
 // 网页版没有真实订单，用习惯题估算"行为分"
 const FREQ_SCORE=[90,70,45,20], NIGHT_BONUS=[8,3,0];
 
+// 跑马灯
+(function(){
+  const items=["巨无霸","麦辣鸡腿堡","薯条","麦乐鸡","麦旋风","板烧鸡腿堡","猪柳蛋麦满分","1+1随心配","麦门祖师","毒舌判词"];
+  const half=items.map(t=>`<span>🍔 ${t}</span>`).join("");
+  document.getElementById("tickerTrack").innerHTML=half+half;
+})();
+
 const ALL=[...QUIZ.knowledge.map(q=>({...q,k:true})),...QUIZ.habit.map(q=>({...q,k:false}))];
 let idx=0, score=0, maxScore=0, habit=[], picks=[];
 const $=id=>document.getElementById(id);
 
-function show(id){["home","quiz","result"].forEach(s=>$(s).classList.toggle("hide",s!==id));window.scrollTo(0,0)}
+function show(id){["home","quiz","result"].forEach(s=>$(s).classList.toggle("hide",s!==id));$(id).scrollIntoView({behavior:"smooth",block:"start"})}
 function start(){show("quiz");render()}
 function render(){
   const q=ALL[idx];
   $("bar").style.width=(idx/ALL.length*100)+"%";
-  $("qno").textContent=(q.k?"知识题 ":"习惯题 ")+(idx+1)+" / "+ALL.length;
+  $("qno").innerHTML=`<span class="qcat">${q.k?"知识题":"习惯题"}</span><br>第 ${idx+1} / ${ALL.length} 题`;
   $("qtext").textContent=q.q;
   $("explain").textContent="";
   $("next").classList.add("hide");
@@ -135,15 +232,17 @@ function finish(){
   if(quizPct>=70&&behavior<40)tags.push("嘴强王者");
   else if(quizPct<40&&behavior>=60)tags.push("身体很诚实");
   habit.forEach(t=>{if(!tags.includes(t)&&tags.length<4)tags.push(t)});
-  const roast=tags.slice(0,2).map(t=>ROASTS[t]||"").filter(Boolean).join("")||"麦门大门常打开，欢迎下次再来。";
+  const roast=tags.slice(0,2).map(t=>ROASTS[t]||"").filter(Boolean).join(" ")||"麦门大门常打开，欢迎下次再来。";
   R={level,total,quiz:Math.round(quizPct),behavior,tags,roast};
+  $("bigNum").textContent=total;
   $("level").textContent=level;
-  $("scoreLine").textContent=`综合 ${total} 分 · 答题 ${R.quiz} 分 · 行为 ${behavior} 分`;
+  $("scoreLine").innerHTML=`答题 <b>${R.quiz}</b> 分 · 行为 <b>${behavior}</b> 分`;
   $("tags").innerHTML=tags.map(t=>`<span class="tag">${t}</span>`).join("");
-  $("roast").textContent=roast;
+  $("roast").textContent="「"+roast+"」";
   show("result");
 }
 
+function rr(x,px,py,w,h,r){x.beginPath();x.moveTo(px+r,py);x.arcTo(px+w,py,px+w,py+h,r);x.arcTo(px+w,py+h,px,py+h,r);x.arcTo(px,py+h,px,py,r);x.arcTo(px,py,px+w,py,r);x.closePath()}
 function wrap(ctx,text,x,y,maxW,lh){
   let line="",lines=[];
   for(const ch of text){ if(ctx.measureText(line+ch).width>maxW){lines.push(line);line=ch}else line+=ch }
@@ -153,25 +252,23 @@ function wrap(ctx,text,x,y,maxW,lh){
 }
 function makeCard(){
   const W=1080,H=1440,c=document.createElement("canvas");c.width=W;c.height=H;
-  const x=c.getContext("2d"), F='-apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+  const x=c.getContext("2d"), F='-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
   const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,"#1a0505");g.addColorStop(.6,"#2b0a06");g.addColorStop(1,"#120404");
   x.fillStyle=g;x.fillRect(0,0,W,H);
   x.strokeStyle="#5a1f12";x.lineWidth=4;x.strokeRect(40,40,W-80,H-80);
   x.textAlign="center";
-  x.fillStyle="#f5c518";x.font=`32px ${F}`;x.fillText("麦  门  审  判",W/2,170);
+  x.fillStyle="#f5c518";x.font=`32px ${F}`;x.fillText("麦 门 审 判",W/2,170);
   const tg=x.createLinearGradient(240,0,840,0);tg.addColorStop(0,"#ffcf3f");tg.addColorStop(1,"#e4002b");
   x.fillStyle=tg;x.font=`bold 150px ${F}`;x.fillText(R.level,W/2,360);
-  x.fillStyle="#aaa";x.font=`38px ${F}`;x.fillText(`综合 ${R.total} 分 · 答题 ${R.quiz} 分 · 行为 ${R.behavior} 分`,W/2,450);
-  // tags
+  x.fillStyle="#aaa";x.font=`38px ${F}`;x.fillText(`综合 ${R.total} 分 · 答题 ${R.quiz} · 行为 ${R.behavior}`,W/2,450);
   x.font=`40px ${F}`;
   const pads=36,gap=24,ws=R.tags.map(t=>x.measureText(t).width+pads*2);
   let tw=ws.reduce((a,b)=>a+b,0)+gap*(ws.length-1),tx=(W-tw)/2,ty=540;
   R.tags.forEach((t,i)=>{
     x.fillStyle="rgba(228,0,43,.18)";x.strokeStyle="#e4002b";x.lineWidth=3;
-    x.beginPath();x.roundRect(tx,ty,ws[i],84,42);x.fill();x.stroke();
+    rr(x,tx,ty,ws[i],84,42);x.fill();x.stroke();
     x.fillStyle="#ffb3c0";x.fillText(t,tx+ws[i]/2,ty+56);tx+=ws[i]+gap;
   });
-  // roast
   x.fillStyle="rgba(245,197,24,.08)";x.fillRect(120,700,W-240,360);
   x.fillStyle="#f5c518";x.fillRect(120,700,10,360);
   x.textAlign="left";x.fillStyle="#ffe9a8";x.font=`46px ${F}`;
@@ -180,7 +277,7 @@ function makeCard(){
   x.fillText("你敢来测吗？",W/2,1190);
   x.fillStyle="#ffbc0d";x.font=`34px ${F}`;
   x.fillText("ttnan.github.io/mcd-maimen-trial",W/2,1260);
-  x.fillStyle="#999";x.font=`32px ${F}`;
+  x.fillStyle="#666";x.font=`28px ${F}`;
   x.fillText("麦当劳程序员创意开发大赛参赛作品",W/2,1330);
   const url=c.toDataURL("image/png");
   $("cardImg").src=url;$("cardImg").classList.remove("hide");$("saveTip").classList.remove("hide");
