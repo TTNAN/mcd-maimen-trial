@@ -38,15 +38,25 @@ def analyze(orders):
         if o.get("storeName"):
             stores.append(o["storeName"])
         for p in o.get("orderProductList", []) or []:
-            name = p.get("productName", "")
+            name = p.get("productName") or ""
+            if not isinstance(name, str):
+                name = str(name)
             qty = p.get("quantity") or 1
+            try:
+                qty = int(qty)
+            except (ValueError, TypeError):
+                qty = 1
             products.extend([name] * qty)
             # 组合子项也算
             for sub in p.get("comboItemList", []) or []:
-                if sub.get("productName"):
-                    products.append(sub["productName"])
-        if float(o.get("realTotalAmount") or 0) == 0:
-            freebies += 1
+                sub_name = sub.get("productName") or ""
+                if sub_name:
+                    products.append(str(sub_name))
+        try:
+            if float(o.get("realTotalAmount") or 0) == 0:
+                freebies += 1
+        except (ValueError, TypeError):
+            pass
 
     # --- 基础统计 ---
     if amounts:
