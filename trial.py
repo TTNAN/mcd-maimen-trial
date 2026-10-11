@@ -5,10 +5,12 @@
     MCD_MCP_TOKEN=xxx python trial.py                 # 交互答题
     MCD_MCP_TOKEN=xxx python trial.py --answers B,B,B,B,B,B,B,A,A,A
     MCD_MCP_TOKEN=xxx python trial.py --no-orders      # 只答题, 不拉订单
+    python trial.py --demo                            # 演示模式: 脱敏示例数据, 无需 Token
 """
 import json
 import os
 import sys
+from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src"))
 from mcp import connect, call_tool
@@ -32,6 +34,7 @@ C = _colors()
 def ask_quiz(preset=None):
     quiz = json.load(open(os.path.join(ROOT, "quiz.json"), encoding="utf-8"))
     score, max_score, habit_tags = 0, 0, []
+    correct, kcount = 0, len(quiz["knowledge"])
     answers = (preset.split(",") if preset else [])
     ai = 0
     print(f"\n=== {quiz['title']} ===\n")
@@ -51,6 +54,7 @@ def ask_quiz(preset=None):
             max_score += q["points"]
             if pick == q["answer"]:
                 score += q["points"]
+                correct += 1
                 print(f"   {C['green']}✓{C['reset']} {q['explain']}")
             else:
                 print(f"   {C['red']}✗{C['reset']} {q['explain']}")
@@ -59,7 +63,31 @@ def ask_quiz(preset=None):
                 habit_tags.append(q["tags"][pick])
                 print(f"   → 已记录")
         print()
-    return score, max_score, habit_tags
+    return score, max_score, habit_tags, correct, kcount
+
+
+def load_demo():
+    """演示模式: 脱敏合成订单 + 示例券, 时间按 daysAgo 换算成最近日期."""
+    d = json.load(open(os.path.join(ROOT, "demo_orders.json"), encoding="utf-8"))
+    now = datetime.now()
+    orders = []
+    for o in d.get("orders", []):
+        t = (now - timedelta(days=o.get("daysAgo", 0))).replace(
+            hour=o.get("hour", 12), minute=30, second=0)
+        orders.append({
+            "realTotalAmount": o.get("amount", "0"),
+            "createTime": t.strftime("%Y-%m-%d %H:%M:%S"),
+            "storeName": o.get("store", ""),
+            "orderProductList": [
+                {"productName": p, "quantity": 1, "comboItemList": []}
+                for p in o.get("products", [])
+            ],
+        })
+    coupons = [{"name": c.get("name", "")} for c in d.get("coupons", [])]
+    return orders, coupons
+
+
+DEMO_ANSWERS = "B,B,A,B,C,A,B,A,B,C,A,B,A,A,B,A,B,A"  # 演示用预设答案
 
 
 def fetch_orders(session):
@@ -99,12 +127,19 @@ def main():
         i = args.index("--answers")
         preset = args[i + 1] if i + 1 < len(args) else None
     no_orders = "--no-orders" in args
+    demo = "--demo" in args
+    if demo and not preset:
+        preset = DEMO_ANSWERS
+        print("演示模式：预设答案 + 脱敏示例订单（含示例券），无需 Token。\n")
 
-    score, max_score, habit_tags = ask_quiz(preset)
+    score, max_score, habit_tags, correct, kcount = ask_quiz(preset)
 
     orders = []
     coupons = []
-    if not no_orders:
+    if demo:
+        orders, coupons = load_demo()
+        print(f"演示模式：载入 {len(orders)} 笔脱敏示例订单，{len(coupons)} 张示例券\n")
+    elif not no_orders:
         try:
             session = connect()
             orders = fetch_orders(session)
@@ -125,6 +160,7 @@ def main():
             profile["tags"].append("薅羊毛党")
     result = judge(score, max_score, profile, habit_tags)
     result["recommend"] = recommend(profile, coupons)
+    result["quiz_detail"] = f"{correct}/{kcount} 答对"
 
     print("=" * 44)
     print(f"  {C['gold']}{C['bold']}审判结果：{result['level']}{C['reset']}")
@@ -138,6 +174,7 @@ def main():
     out = os.path.join(ROOT, "report.html")
     render(result, out)
     print(f"\n分享卡已生成：{out}")
+    print("在浏览器打开后：手机长按卡片保存图片，或点「📥 下载分享卡 PNG」按钮。")
     return 0
 
 
