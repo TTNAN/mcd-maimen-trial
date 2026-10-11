@@ -12,7 +12,7 @@ body{background:#0b0605;color:#f5f5f5;font-family:-apple-system,"PingFang SC","H
 .wrap{width:100%;max-width:480px;margin:0 auto;padding:0 16px 40px;position:relative;z-index:1}
 
 /* ---------- HERO ---------- */
-.hero{position:relative;margin:0 -16px;padding:64px 24px 56px;text-align:center;overflow:hidden;
+.hero{position:relative;padding:64px 24px 56px;text-align:center;overflow:hidden;
   background:url('../assets/poster.png') center 20%/cover no-repeat #120404}
 .hero::before{content:"";position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(11,6,5,.55) 0%,rgba(11,6,5,.25) 45%,rgba(11,6,5,.92) 100%)}
@@ -32,7 +32,7 @@ body{background:#0b0605;color:#f5f5f5;font-family:-apple-system,"PingFang SC","H
 @keyframes float{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-18px) rotate(8deg)}}
 
 /* ---------- TICKER ---------- */
-.ticker{margin:0 -16px;overflow:hidden;background:#DA291C;border-top:2px solid #FFC72C;border-bottom:2px solid #FFC72C;
+.ticker{margin:0;overflow:hidden;background:#DA291C;border-top:2px solid #FFC72C;border-bottom:2px solid #FFC72C;
   transform:rotate(-1.2deg) scale(1.02)}
 .ticker .track{display:flex;white-space:nowrap;padding:10px 0;animation:tick 22s linear infinite;width:max-content}
 .ticker span{color:#fff;font-size:14px;font-weight:600;padding:0 18px;letter-spacing:.1em}
