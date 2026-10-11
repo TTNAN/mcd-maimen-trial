@@ -9,7 +9,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:#0b0605;color:#f5f5f5;font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;overflow-x:hidden}
-.wrap{width:100%;max-width:480px;margin:0 auto;padding:0 16px 40px;position:relative;z-index:1}
+.wrap{width:100%;max-width:1000px;margin:0 auto;padding:0 16px 40px;position:relative;z-index:1}
 
 /* ---------- HERO ---------- */
 .hero{position:relative;padding:64px 24px 56px;text-align:center;overflow:hidden;
@@ -91,6 +91,40 @@ h2.rt{text-align:center;font-size:32px;margin:10px 0 6px;
 #cardImg{width:100%;border-radius:14px;margin-top:14px;border:1px solid #6b2a16}
 .bigscore{font-size:64px;font-weight:900;text-align:center;color:#FFC72C;text-shadow:0 4px 30px rgba(255,199,44,.4)}
 .bigscore small{font-size:18px;color:#a08c6d;font-weight:400}
+
+/* ---------- 桌面端：答题区放大，大气 ---------- */
+@media (min-width:720px){
+  .hero{padding:110px 24px 100px}
+  .hero h1{font-size:84px}
+  .hero .sub{font-size:19px}
+  .hero .cta{font-size:20px;padding:18px 60px}
+  .levels{padding:60px 0 16px}
+  .sec-title{font-size:30px}
+  .sec-sub{font-size:15px}
+  .lv-grid{grid-template-columns:repeat(4,1fr);gap:16px}
+  .lv{padding:26px 14px}
+  .lv .e{font-size:44px}
+  .lv .n{font-size:20px}
+  .lv .d{font-size:14px}
+  .card{max-width:860px;margin-left:auto;margin-right:auto;margin-top:48px;padding:56px 64px;border-radius:28px}
+  .card::before{font-size:60px;top:-32px;right:28px}
+  .kicker{font-size:14px}
+  h2.rt{font-size:46px;margin:14px 0 10px}
+  .sub{font-size:17px}
+  .progress{height:10px;margin-bottom:26px}
+  .qcat{font-size:14px;padding:5px 16px}
+  .qno{font-size:16px}
+  .q{font-size:30px;margin:12px 0 28px}
+  .opt{font-size:20px;padding:22px 28px;border-radius:18px;margin-bottom:14px}
+  .explain{font-size:17px;min-height:60px}
+  .btn{font-size:20px;padding:20px;border-radius:18px}
+  .bigscore{font-size:110px}
+  .score{font-size:17px}
+  .score b{font-size:28px}
+  .tag{font-size:17px;padding:10px 22px}
+  .roast{font-size:19px;padding:20px 24px}
+  .note{font-size:15px}
+}
 </style>
 </head>
 <body>
