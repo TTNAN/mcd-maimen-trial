@@ -95,7 +95,7 @@ h2.rt{text-align:center;font-size:32px;margin:10px 0 6px;
 @keyframes pulse{0%,100%{text-shadow:0 4px 30px rgba(255,199,44,.4)}50%{text-shadow:0 4px 70px rgba(255,199,44,.85)}}
 .opt.wrong{animation:shake .32s}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
-.duel{position:relative;z-index:2;margin:20px auto 0;display:inline-block;background:rgba(218,41,28,.28);border:1px solid #DA291C;color:#ffe9a8;border-radius:999px;padding:10px 24px;font-size:15px;animation:reveal .5s ease-out}
+.duel{position:relative;z-index:5;display:block;text-align:center;background:linear-gradient(90deg,#DA291C,#8f130b);color:#fff;font-size:17px;font-weight:700;padding:15px 16px;animation:reveal .5s ease-out;box-shadow:0 4px 24px rgba(218,41,28,.55)}
 .duel b{color:#FFC72C}
 #cardImg{width:100%;border-radius:14px;margin-top:14px;border:1px solid #6b2a16}
 .bigscore{font-size:64px;font-weight:900;text-align:center;color:#FFC72C;text-shadow:0 4px 30px rgba(255,199,44,.4)}
@@ -234,7 +234,7 @@ const FREQ_SCORE=[90,70,45,20], NIGHT_BONUS=[8,3,0];
     const b=document.createElement("div");
     b.className="duel";
     b.textContent="⚔️ "+lv+"（"+sc+"分）向你发起挑战！";
-    document.querySelector(".hero").appendChild(b);
+    document.body.insertBefore(b,document.body.firstChild);
   }catch(e){}
 })();
 
