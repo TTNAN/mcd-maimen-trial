@@ -56,6 +56,18 @@ class TestAnalyzer(unittest.TestCase):
         p = analyze(orders)
         self.assertIn("稳定输出", p["tags"])
 
+    def test_abnormal_orders(self):
+        orders = [
+            {},
+            {"realTotalAmount": "abc", "createTime": "not-a-time",
+             "orderProductList": None},
+            {"realTotalAmount": None, "storeName": "x", "createTime": None},
+            {"orderProductList": [{"productName": None, "quantity": None}]},
+        ]
+        p = analyze(orders)  # 不崩即可
+        self.assertGreaterEqual(p["behavior_score"], 0)
+        self.assertLessEqual(p["behavior_score"], 100)
+
 
 class TestPersonas(unittest.TestCase):
     def _profile(self, behavior, tags=()):
