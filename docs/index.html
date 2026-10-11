@@ -13,7 +13,7 @@ body{background:#0b0605;color:#f5f5f5;font-family:-apple-system,"PingFang SC","H
 
 /* ---------- HERO ---------- */
 .hero{position:relative;padding:64px 24px 56px;text-align:center;overflow:hidden;
-  background:url('../assets/poster.png') center 20%/cover no-repeat #120404}
+  background:url('../assets/poster.jpg') center 20%/cover no-repeat #120404}
 .hero::before{content:"";position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(11,6,5,.55) 0%,rgba(11,6,5,.25) 45%,rgba(11,6,5,.92) 100%)}
 .hero>*{position:relative;z-index:2}
@@ -89,6 +89,14 @@ h2.rt{text-align:center;font-size:32px;margin:10px 0 6px;
 .foot .m{font-size:26px;font-weight:900;color:#FFC72C}
 .hook{text-align:center;font-size:15px;font-weight:700;color:#FFC72C;margin:18px 0 4px;line-height:1.7}
 .hide{display:none!important}
+#result:not(.hide){animation:reveal .6s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes reveal{from{opacity:0;transform:translateY(36px) scale(.96)}to{opacity:1;transform:none}}
+.bigscore{animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{text-shadow:0 4px 30px rgba(255,199,44,.4)}50%{text-shadow:0 4px 70px rgba(255,199,44,.85)}}
+.opt.wrong{animation:shake .32s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.duel{position:relative;z-index:2;margin:20px auto 0;display:inline-block;background:rgba(218,41,28,.28);border:1px solid #DA291C;color:#ffe9a8;border-radius:999px;padding:10px 24px;font-size:15px;animation:reveal .5s ease-out}
+.duel b{color:#FFC72C}
 #cardImg{width:100%;border-radius:14px;margin-top:14px;border:1px solid #6b2a16}
 .bigscore{font-size:64px;font-weight:900;text-align:center;color:#FFC72C;text-shadow:0 4px 30px rgba(255,199,44,.4)}
 .bigscore small{font-size:18px;color:#a08c6d;font-weight:400}
@@ -215,6 +223,21 @@ const ROASTS={"深夜党":"深夜的emo，一半是生活，一半是麦辣鸡�
 // 网页版没有真实订单，用习惯题估算"行为分"
 const FREQ_SCORE=[90,70,45,20], NIGHT_BONUS=[8,3,0];
 
+// 挑战链接：?duel=段位:分数
+(function(){
+  try{
+    const m=new URLSearchParams(location.search).get("duel");
+    if(!m) return;
+    const i=m.lastIndexOf(":");
+    const lv=m.slice(0,i), sc=m.slice(i+1);
+    if(!lv) return;
+    const b=document.createElement("div");
+    b.className="duel";
+    b.textContent="⚔️ "+lv+"（"+sc+"分）向你发起挑战！";
+    document.querySelector(".hero").appendChild(b);
+  }catch(e){}
+})();
+
 // 跑马灯
 (function(){
   const items=["巨无霸","麦辣鸡腿堡","薯条","麦乐鸡","麦旋风","板烧鸡腿堡","猪柳蛋麦满分","1+1随心配","麦门祖师","毒舌判词"];
@@ -300,7 +323,7 @@ function finish(){
 async function shareCard(){
   if($("cardImg").classList.contains("hide")) makeCard();
   const text=`我在「麦门审判」拿下「${R.level}」，综合${R.total}分！你敢来测吗？`;
-  const url="https://ttnan.github.io/mcd-maimen-trial/";
+  const url="https://ttnan.github.io/mcd-maimen-trial/?duel="+encodeURIComponent(R.level+":"+R.total);
   try{
     const blob=await (await fetch($("cardImg").src)).blob();
     const file=new File([blob],"麦门审判-"+R.level+".png",{type:"image/png"});
@@ -348,7 +371,7 @@ function makeCard(){
   x.textAlign="left";x.fillStyle="#ffe9a8";x.font=`46px ${F}`;
   wrap(x,"「"+R.roast+"」",170,842,W-340,74);
   x.textAlign="center";x.fillStyle="#ddd";x.font=`40px ${F}`;
-  x.fillText("你敢来测吗？",W/2,1190);
+  x.fillText(`我是${R.level}，你敢来审判吗？`,W/2,1190);
   x.fillStyle="#ffbc0d";x.font=`34px ${F}`;
   x.fillText("ttnan.github.io/mcd-maimen-trial",W/2,1260);
   x.fillStyle="#666";x.font=`28px ${F}`;
