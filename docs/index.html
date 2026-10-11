@@ -151,6 +151,7 @@ function wrap(ctx,text,x,y,maxW,lh){
   lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lh));
   return lines.length*lh;
 }
+function rr(x,px,py,w,h,r){x.beginPath();x.moveTo(px+r,py);x.arcTo(px+w,py,px+w,py+h,r);x.arcTo(px+w,py+h,px,py+h,r);x.arcTo(px,py+h,px,py,r);x.arcTo(px,py,px+w,py,r);x.closePath()}
 function makeCard(){
   const W=1080,H=1440,c=document.createElement("canvas");c.width=W;c.height=H;
   const x=c.getContext("2d"), F='-apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
@@ -168,7 +169,7 @@ function makeCard(){
   let tw=ws.reduce((a,b)=>a+b,0)+gap*(ws.length-1),tx=(W-tw)/2,ty=540;
   R.tags.forEach((t,i)=>{
     x.fillStyle="rgba(228,0,43,.18)";x.strokeStyle="#e4002b";x.lineWidth=3;
-    x.beginPath();x.roundRect(tx,ty,ws[i],84,42);x.fill();x.stroke();
+    rr(x,tx,ty,ws[i],84,42);x.fill();x.stroke();
     x.fillStyle="#ffb3c0";x.fillText(t,tx+ws[i]/2,ty+56);tx+=ws[i]+gap;
   });
   // roast
