@@ -33,6 +33,12 @@
 
 > 👉 把链接甩给那个自称「麦门信徒」的朋友，看看谁才是真祖师：https://ttnan.github.io/mcd-maimen-trial/
 
+## 截图
+
+| 首页 | 答题 | 审判结果 |
+| --- | --- | --- |
+| ![首页](assets/screenshots/hero.jpg) | ![答题](assets/screenshots/quiz.jpg) | ![审判结果](assets/screenshots/result.jpg) |
+
 ## 段位
 
 | 分数 | 段位 | 判词 |
