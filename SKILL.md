@@ -17,6 +17,7 @@ https://ttnan.github.io/mcd-maimen-trial/
 MCD_MCP_TOKEN=xxx python trial.py --answers B,B,A,C,A,A,B,A,A,B,A,C,A,A,B,A,B,A
 # --answers: 18 个选项(A/B/C)，跳过交互直接出结果
 # --no-orders: 只答题，不拉订单（无 token 时用）
+# --demo: 演示模式，脱敏示例数据 + 示例券，无需 Token，评委零门槛体验
 ```
 
 也可以当库调用：
