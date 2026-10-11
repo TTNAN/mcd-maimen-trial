@@ -135,7 +135,7 @@ function finish(){
   if(quizPct>=70&&behavior<40)tags.push("嘴强王者");
   else if(quizPct<40&&behavior>=60)tags.push("身体很诚实");
   habit.forEach(t=>{if(!tags.includes(t)&&tags.length<4)tags.push(t)});
-  const roast=tags.slice(0,2).map(t=>ROASTS[t]||"").filter(Boolean).join(" ")||"麦门大门常打开，欢迎下次再来。";
+  const roast=tags.slice(0,2).map(t=>ROASTS[t]||"").filter(Boolean).join("")||"麦门大门常打开，欢迎下次再来。";
   R={level,total,quiz:Math.round(quizPct),behavior,tags,roast};
   $("level").textContent=level;
   $("scoreLine").textContent=`综合 ${total} 分 · 答题 ${R.quiz} 分 · 行为 ${behavior} 分`;
@@ -151,7 +151,6 @@ function wrap(ctx,text,x,y,maxW,lh){
   lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lh));
   return lines.length*lh;
 }
-function rr(x,px,py,w,h,r){x.beginPath();x.moveTo(px+r,py);x.arcTo(px+w,py,px+w,py+h,r);x.arcTo(px+w,py+h,px,py+h,r);x.arcTo(px,py+h,px,py,r);x.arcTo(px,py,px+w,py,r);x.closePath()}
 function makeCard(){
   const W=1080,H=1440,c=document.createElement("canvas");c.width=W;c.height=H;
   const x=c.getContext("2d"), F='-apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
@@ -162,14 +161,14 @@ function makeCard(){
   x.fillStyle="#f5c518";x.font=`32px ${F}`;x.fillText("麦  门  审  判",W/2,170);
   const tg=x.createLinearGradient(240,0,840,0);tg.addColorStop(0,"#ffcf3f");tg.addColorStop(1,"#e4002b");
   x.fillStyle=tg;x.font=`bold 150px ${F}`;x.fillText(R.level,W/2,360);
-  x.fillStyle="#aaa";x.font=`38px ${F}`;x.fillText(`综合 ${R.total} 分 · 答题 ${R.quiz} · 行为 ${R.behavior}`,W/2,450);
+  x.fillStyle="#aaa";x.font=`38px ${F}`;x.fillText(`综合 ${R.total} 分 · 答题 ${R.quiz} 分 · 行为 ${R.behavior} 分`,W/2,450);
   // tags
   x.font=`40px ${F}`;
   const pads=36,gap=24,ws=R.tags.map(t=>x.measureText(t).width+pads*2);
   let tw=ws.reduce((a,b)=>a+b,0)+gap*(ws.length-1),tx=(W-tw)/2,ty=540;
   R.tags.forEach((t,i)=>{
     x.fillStyle="rgba(228,0,43,.18)";x.strokeStyle="#e4002b";x.lineWidth=3;
-    rr(x,tx,ty,ws[i],84,42);x.fill();x.stroke();
+    x.beginPath();x.roundRect(tx,ty,ws[i],84,42);x.fill();x.stroke();
     x.fillStyle="#ffb3c0";x.fillText(t,tx+ws[i]/2,ty+56);tx+=ws[i]+gap;
   });
   // roast
@@ -181,7 +180,7 @@ function makeCard(){
   x.fillText("你敢来测吗？",W/2,1190);
   x.fillStyle="#ffbc0d";x.font=`34px ${F}`;
   x.fillText("ttnan.github.io/mcd-maimen-trial",W/2,1260);
-  x.fillStyle="#666";x.font=`28px ${F}`;
+  x.fillStyle="#999";x.font=`32px ${F}`;
   x.fillText("麦当劳程序员创意开发大赛参赛作品",W/2,1330);
   const url=c.toDataURL("image/png");
   $("cardImg").src=url;$("cardImg").classList.remove("hide");$("saveTip").classList.remove("hide");
