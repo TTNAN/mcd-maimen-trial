@@ -1,6 +1,7 @@
 """订单行为分析引擎: 从历史订单里扒出你的麦门画像."""
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timedelta
+from statistics import pstdev
 
 
 def parse_time(s):
@@ -23,7 +24,7 @@ def analyze(orders):
         profile["tags"].append("云信徒")
         return profile
 
-    amounts, hours, stores, products = [], [], [], []
+    amounts, hours, stores, products, dts = [], [], [], [], []
     freebies = 0
     for o in orders:
         try:
@@ -33,6 +34,7 @@ def analyze(orders):
         t = parse_time(o.get("createTime", ""))
         if t:
             hours.append(t.hour)
+            dts.append(t)
         if o.get("storeName"):
             stores.append(o["storeName"])
         for p in o.get("orderProductList", []) or []:
@@ -99,11 +101,23 @@ def analyze(orders):
     if not tags:
         tags.append("随缘麦门")
 
-    # --- 行为分 (0-100): 订单量/频率/广度 ---
-    score = min(40, n * 8)  # 订单数, 5单封顶
-    score += 20 if len(period) >= 3 else len(period) * 6  # 时段广度
-    score += 20 if len(set(stores)) >= 3 else len(set(stores)) * 6  # 门店广度
-    score += min(20, len(set(products)) * 2)  # 品类广度
+    # --- 行为分 (0-100): 订单量/广度/近期活跃/深夜浓度/消费稳定 ---
+    n = len(orders)
+    score = min(30, n * 6)                                            # 订单数
+    score += 15 if len(period) >= 3 else len(period) * 5               # 时段广度
+    score += 15 if len(set(stores)) >= 3 else len(set(stores)) * 5     # 门店广度
+    score += min(10, len(set(products)))                               # 品类广度
+    if dts:
+        recent = sum(1 for d in dts if datetime.now() - d <= timedelta(days=30))
+        score += min(15, recent * 5)                                   # 近期活跃加权
+        profile["stats"]["recent_30d"] = recent
+    late_ratio = period.get("深夜", 0) / n if n else 0
+    score += round(late_ratio * 10)                                    # 深夜浓度
+    if len(amounts) >= 3:
+        mean = sum(amounts) / len(amounts)
+        if mean > 0 and pstdev(amounts) / mean < 0.4:
+            score += 5                                                # 客单价稳定
+            tags.append("稳定输出") if "稳定输出" not in tags else None
     profile["behavior_score"] = round(min(100, score))
 
     return profile
