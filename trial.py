@@ -14,9 +14,19 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "src
 from mcp import connect, call_tool
 from analyzer import analyze
 from personas import judge
+from recommend import recommend
 from report import render
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
+
+# 终端颜色 (不支持时自动降级为空)
+def _colors():
+    if not sys.stdout.isatty() or os.environ.get("NO_COLOR"):
+        return {k: "" for k in ("gold", "red", "green", "bold", "dim", "reset")}
+    return {"gold": "\033[33m", "red": "\033[31m", "green": "\033[32m",
+            "bold": "\033[1m", "dim": "\033[2m", "reset": "\033[0m"}
+
+C = _colors()
 
 
 def ask_quiz(preset=None):
@@ -41,9 +51,9 @@ def ask_quiz(preset=None):
             max_score += q["points"]
             if pick == q["answer"]:
                 score += q["points"]
-                print(f"   ✓ {q['explain']}")
+                print(f"   {C['green']}✓{C['reset']} {q['explain']}")
             else:
-                print(f"   ✗ {q['explain']}")
+                print(f"   {C['red']}✗{C['reset']} {q['explain']}")
         else:
             if 0 <= pick < len(q["tags"]):
                 habit_tags.append(q["tags"][pick])
@@ -59,6 +69,28 @@ def fetch_orders(session):
     return [o for o in orders if isinstance(o, dict)]
 
 
+def extract_coupons(payload):
+    """从 available-coupons 返回里抠出券名列表, 结构防御式解析."""
+    data = payload.get("data", payload) if isinstance(payload, dict) else {}
+    items = []
+    if isinstance(data, dict):
+        for key in ("list", "coupons", "records", "items"):
+            if isinstance(data.get(key), list):
+                items = data[key]
+                break
+    elif isinstance(data, list):
+        items = data
+    out = []
+    for it in items:
+        if not isinstance(it, dict):
+            continue
+        name = it.get("couponName") or it.get("name") or it.get("title") or ""
+        status = it.get("status") or it.get("state") or ""
+        if name:
+            out.append({"name": str(name), "status": str(status)})
+    return out
+
+
 def main():
     args = sys.argv[1:]
     preset = next((a.split("=", 1)[1] for a in args if a.startswith("--answers=")), None)
@@ -71,23 +103,37 @@ def main():
     score, max_score, habit_tags = ask_quiz(preset)
 
     orders = []
+    coupons = []
     if not no_orders:
         try:
             session = connect()
             orders = fetch_orders(session)
-            print(f"已拉取 {len(orders)} 笔历史订单\n")
+            print(f"已拉取 {len(orders)} 笔历史订单")
+            try:
+                payload, _ = call_tool(session, "available-coupons", {})
+                coupons = extract_coupons(payload)
+                print(f"发现 {len(coupons)} 张可领优惠券\n")
+            except Exception as e:
+                print(f"优惠券查询失败 ({e})，跳过。\n")
         except Exception as e:
             print(f"订单拉取失败 ({e})，仅按答题出结果。\n")
 
     profile = analyze(orders)
+    if coupons:
+        profile["stats"]["coupon_count"] = len(coupons)
+        if len(coupons) >= 5 and "薅羊毛党" not in profile["tags"]:
+            profile["tags"].append("薅羊毛党")
     result = judge(score, max_score, profile, habit_tags)
+    result["recommend"] = recommend(profile, coupons)
 
-    print("=" * 40)
-    print(f"  审判结果：{result['level']}")
-    print(f"  综合 {result['total_score']} 分（答题 {result['quiz_score']} / 行为 {result['behavior_score']}）")
-    print(f"  标签：{' / '.join(result['tags'])}")
-    print(f"  判词：{result['roast']}")
-    print("=" * 40)
+    print("=" * 44)
+    print(f"  {C['gold']}{C['bold']}审判结果：{result['level']}{C['reset']}")
+    print(f"  综合 {C['bold']}{result['total_score']}{C['reset']} 分"
+          f"（答题 {result['quiz_score']} / 行为 {result['behavior_score']}）")
+    print(f"  标签：{C['red']}{' / '.join(result['tags'])}{C['reset']}")
+    print(f"  判词：{C['gold']}{result['roast']}{C['reset']}")
+    print(f"  {C['green']}下一单：{result['recommend']}{C['reset']}")
+    print("=" * 44)
 
     out = os.path.join(ROOT, "report.html")
     render(result, out)
